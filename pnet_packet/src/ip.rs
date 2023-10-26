@@ -9,8 +9,8 @@
 //! Defines the type and constants for IP next header/next level protocol
 //! fields.
 
-use core::fmt;
 use crate::PrimitiveValues;
+use core::fmt;
 
 /// Protocol numbers as defined at:
 /// <http://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml>

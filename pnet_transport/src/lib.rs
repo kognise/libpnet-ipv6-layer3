@@ -57,8 +57,8 @@ pub enum TransportProtocol {
 pub enum TransportChannelType {
     /// The application will send and receive transport layer packets.
     Layer4(TransportProtocol),
-    /// The application will send and receive IPv4 packets, with the specified transport protocol.
-    Layer3(IpNextHeaderProtocol),
+    /// The application will send and receive network layer packets, with the specified transport protocol.
+    Layer3(TransportProtocol),
 }
 
 /// Structure used for sending at the transport layer. Should be created with `transport_channel()`.
@@ -103,15 +103,24 @@ pub fn transport_channel(
         net::UdpSocket::bind(sockaddr)
     };
 
-    let socket = unsafe {
+    let (is_ipv6, proto) =
         match channel_type {
-            Layer4(Ipv4(IpNextHeaderProtocol(proto))) | Layer3(IpNextHeaderProtocol(proto)) => {
-                pnet_sys::socket(pnet_sys::AF_INET, pnet_sys::SOCK_RAW, proto as libc::c_int)
-            }
-            Layer4(Ipv6(IpNextHeaderProtocol(proto))) => {
-                pnet_sys::socket(pnet_sys::AF_INET6, pnet_sys::SOCK_RAW, proto as libc::c_int)
-            }
-        }
+            Layer4(Ipv4(IpNextHeaderProtocol(proto)))
+            | Layer3(Ipv4(IpNextHeaderProtocol(proto))) => (false, proto),
+            Layer4(Ipv6(IpNextHeaderProtocol(proto)))
+            | Layer3(Ipv6(IpNextHeaderProtocol(proto))) => (true, proto),
+        };
+
+    let socket = unsafe {
+        pnet_sys::socket(
+            if is_ipv6 {
+                pnet_sys::AF_INET6
+            } else {
+                pnet_sys::AF_INET
+            },
+            pnet_sys::SOCK_RAW,
+            proto as libc::c_int,
+        )
     };
     if socket == pnet_sys::INVALID_SOCKET {
         return Err(Error::last_os_error());
@@ -125,7 +134,11 @@ pub fn transport_channel(
         let res = unsafe {
             pnet_sys::setsockopt(
                 socket,
-                pnet_sys::IPPROTO_IP,
+                if is_ipv6 {
+                    pnet_sys::IPPROTO_IPV6
+                } else {
+                    pnet_sys::IPPROTO_IP
+                },
                 pnet_sys::IP_HDRINCL,
                 (&hincl as *const libc::c_int) as pnet_sys::Buf,
                 mem::size_of::<libc::c_int>() as pnet_sys::SockLen,

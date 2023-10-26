@@ -1,3 +1,5 @@
+kognise's fork of libpnet. enables ipv6 support with layer 3 transport channels.
+
 # libpnet [![Crates.io](https://img.shields.io/crates/v/pnet.svg)](https://crates.io/crates/pnet) ![License](https://img.shields.io/crates/l/pnet.svg) [![Documentation](https://docs.rs/pnet/badge.svg)](https://docs.rs/pnet/)
 
 Build Status: [![Build Status](https://github.com/libpnet/libpnet/actions/workflows/ci.yml/badge.svg)](https://github.com/libpnet/libpnet/actions/workflows/ci.yml)
