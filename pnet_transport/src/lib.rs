@@ -139,7 +139,11 @@ pub fn transport_channel(
                 } else {
                     pnet_sys::IPPROTO_IP
                 },
-                pnet_sys::IP_HDRINCL,
+                if is_ipv6 {
+                    pnet_sys::IPV6_HDRINCL
+                } else {
+                    pnet_sys::IP_HDRINCL
+                },
                 (&hincl as *const libc::c_int) as pnet_sys::Buf,
                 mem::size_of::<libc::c_int>() as pnet_sys::SockLen,
             )
