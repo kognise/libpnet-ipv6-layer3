@@ -1,4 +1,4 @@
-kognise's fork of libpnet. enables ipv6 support with layer 3 transport channels.
+kognise's fork of libpnet. enables ipv6 support with layer 3 transport channels. also adds ipv6 time exceeded packet parsing.
 
 # libpnet [![Crates.io](https://img.shields.io/crates/v/pnet.svg)](https://crates.io/crates/pnet) ![License](https://img.shields.io/crates/l/pnet.svg) [![Documentation](https://docs.rs/pnet/badge.svg)](https://docs.rs/pnet/)
 
